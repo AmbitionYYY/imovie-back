@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+  <mapper namespace="com.offcn.dao.PerformerDao">
+  <!-- 查询数据给主页 -->
+  <select id="selectPerformerToMain" resultType="com.offcn.bean.Performer">
+  SELECT * FROM  performerdetailtable LIMIT 8
+  
+  </select>
+  
+  
+  <!-- 分页列表查询演员 -->
+  <select id="selectPerformerList" parameterType="com.offcn.bean.ConditionBean" resultType="com.offcn.bean.Performer">
+ SELECT * FROM performerdetailtable
+		<where>
+			<if test="conname != null and conname.length > 0">
+				<!-- ${}格式实现的是SQL语句字符串串联，简单的说就是把conname中的值取出来
+				在${}格式所指定的位置串入SQL中去 -->
+				${conname} like concat('%',#{convalue},'%')
+			</if>
+		</where>
+
+  
+  </select>
+  
+  	<!-- 按照姓名查询一位演员 -->
+	<select id="selectPerformerByName" parameterType="string" resultType="com.offcn.bean.Performer">
+		select * from performerdetailtable where name = #{name}
+	</select>
+	
+	<!-- 统计演员总数 -->
+  <select id="selectCount" resultType="int">
+  select count(*) from performerdetailtable
+  
+  </select>
+  </mapper>

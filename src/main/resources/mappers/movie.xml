@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+  <mapper namespace="com.offcn.dao.MovieDao">
+  	
+  	<!-- 查询数据给主页 -->
+  
+  	<select id="selectMovieToMain" resultType="com.offcn.bean.Movie">
+  	select * from movietable limit 8
+  	
+  	</select>
+  	<!-- 分页查询 -->
+  	<select id="selectMovieList" parameterType="com.offcn.bean.ConditionBean" resultType="com.offcn.bean.Movie">
+  	  	SELECT DISTINCT m.*
+		FROM moviedetailtable md JOIN movietable m
+		ON md.id = m.id
+		JOIN categroymovietable c
+		ON FIND_IN_SET(c.title,md.categroy)
+  	  	<where>
+			<if test="area != null and area.length > 0">
+				and c.categroy = '地区' AND c.title LIKE CONCAT('%',#{area},'%')
+			</if>
+			<if test="type != null and type.length > 0">
+				and c.categroy = '类型' AND c.title LIKE CONCAT('%',#{type},'%')
+			</if>
+			<if test="style != null and style.length > 0">
+				and c.categroy = '规格' AND c.title LIKE CONCAT('%',#{style},'%')
+			</if>
+			<if test="year != null and year.length > 0">
+				and SUBSTR(imagepath,31,4) like concat('%',#{year},'%')
+			</if>
+			<if test="name != null and name.length > 0">
+				and m.moviename LIKE CONCAT('%',#{name},'%')
+			</if>
+		</where>	
+  	</select>
+  	
+  	<!-- 插入功能 -->
+  	<insert id="insert" parameterType="com.offcn.bean.Movie">
+  	
+  	<!-- 获取自动生成的id -->
+  	<selectKey resultType="int" keyColumn="id" keyProperty="id" order="AFTER">
+  		select last_insert_id()
+  	
+  	</selectKey>
+  	
+  	INSERT INTO movietable
+	( 
+	moviename, 
+	time, 
+	url, 
+	imagepath, 
+	saveimagepath, 
+	score, 
+	status, 
+	source
+	)
+	VALUES
+	( 
+	#{moviename}, 
+	#{time}, 
+	#{url}, 
+	#{imagepath}, 
+	#{saveimagepath}, 
+	#{score}, 
+	#{status}, 
+	#{source}
+	)
+  	</insert>
+  
+  <select id="selectMovieById" parameterType="int" resultType="com.offcn.bean.Movie">
+    select * from movietable where id= #{id}
+  
+  
+  </select>
+ 	<!-- 按照id修改数据 -->
+	<update id="update" parameterType="com.offcn.bean.Movie">
+		update movietable
+		<set>
+			moviename = #{moviename} , 
+			time = #{time} , 
+			url = #{url} , 
+			imagepath = #{imagepath} , 
+			<if test="saveimagepath != null and saveimagepath.length > 0">
+				saveimagepath = #{saveimagepath} , 
+			</if>
+			score = #{score} , 
+			status = #{status} , 
+			source = #{source}
+		</set>
+		<where>
+			id = #{id}
+		</where>
+	</update>
+
+  
+  <!-- 按照id改状审核态 -->
+  <update id="audit" parameterType="map" >
+  update movietable
+  <set>
+  <!-- #{}中的名称为@param注解l里面变量名称 -->
+  status=#{status}
+  
+  </set>
+  <where>
+			id = #{id}
+		</where>
+  
+  </update>
+  <!-- 按照id删除 -->
+  <delete id="deleteById" parameterType="int">
+  
+  delete from movietable where id = #{id}
+  </delete>
+  
+  <!-- 查询电影总数 -->
+  	<select id="selectCount"	resultType="int">
+  select  count(*) from movietable
+
+  	</select>
+  </mapper>

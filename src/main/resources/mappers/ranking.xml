@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+  <mapper namespace="com.offcn.dao.RankingDao">
+  
+  <!-- 排名查询 -->
+  
+  <select id="selectRankingList" resultType="com.offcn.bean.Ranking">
+ 	SELECT title NAME,COUNT(title) num,ROUND(AVG(m.score),2) avgscore,
+		ROUND(COUNT(title)*100/(SELECT COUNT(*) FROM movietable),2) percent
+		FROM categroymovietable c JOIN moviedetailtable md
+		ON FIND_IN_SET(c.title,md.categroy)
+		JOIN movietable m
+		ON md.id = m.id
+		GROUP BY title
+		ORDER BY num DESC,avgscore DESC
+		LIMIT 8
+
+  
+  </select>
+  </mapper>

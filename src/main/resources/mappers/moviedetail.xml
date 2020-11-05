@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+  <mapper namespace="com.offcn.dao.MoviedetailDao">
+  <!-- 插入数据 -->
+  <insert id="insert" parameterType="com.offcn.bean.MovieDetail">
+  
+  INSERT INTO moviedetailtable
+	(id, 
+	director, 
+	keyword, 
+	categroy, 
+	des
+	)
+	VALUES
+	(#{id}, 
+	#{director}, 
+	#{keyword}, 
+	#{categroy}, 
+	#{des}
+	)
+  
+  </insert>
+  <select id="selectMovieDetailById" parameterType="int" resultType="com.offcn.bean.MovieDetail">
+  select * from moviedetailtable where id= #{id}
+  </select>
+ <!-- 按照id修改数据 -->
+	<update id="update" parameterType="com.offcn.bean.MovieDetail">
+		UPDATE moviedetailtable
+		<set>
+			director = #{director} , 
+			keyword = #{keyword} , 
+			categroy = #{categroy} , 
+			des = #{des}
+		</set>
+		
+		<where>
+			id = #{id}
+		</where>
+	</update>
+<!-- 按照id删除数据 -->
+<delete id="deleteById" parameterType="int">
+delete from moviedetailtable where id=#{id}
+
+</delete>
+
+  
+  </mapper>
